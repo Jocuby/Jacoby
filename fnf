@@ -1,4 +1,4 @@
--- Orion
+-- OrionLib
 local OrionLib = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/jensonhirst/Orion/main/source"
 ))()
@@ -20,7 +20,7 @@ local Tab = Window:MakeTab({
 Tab:AddLabel("Auto Play 4K (Real Long Note Hold)")
 
 ----------------------------------------------------------------
--- GLOBAL STATE
+-- STATE
 ----------------------------------------------------------------
 local playing = false
 local rsConn, guiConn
@@ -30,7 +30,7 @@ local dup = {Left = 1, Down = 2, Up = 3, Right = 4}
 
 local notes = {}
 local hitArrows = {}
-local holdingNotes = {}
+local activeHolds = {}
 
 ----------------------------------------------------------------
 -- CLEANUP
@@ -39,34 +39,35 @@ getgenv().restartautoplayss = function()
     if rsConn then rsConn:Disconnect() rsConn = nil end
     if guiConn then guiConn:Disconnect() guiConn = nil end
 
-    for _, kb in pairs(keybinds) do
-        keyrelease(kb)
+    for _, k in pairs(keybinds) do
+        keyrelease(k)
     end
 
     notes = {}
     hitArrows = {}
-    holdingNotes = {}
+    activeHolds = {}
     playing = false
 end
 
 ----------------------------------------------------------------
--- SIDE DETECTION
+-- SIDE DETECTION (ORİJİNALDEN KORUNDU)
 ----------------------------------------------------------------
-local function getSide(player)
+local function getSide(plr)
     for _, v in pairs(game.ReplicatedStorage.ComplexMatches:GetChildren()) do
         for _, p in pairs(v:GetChildren()) do
-            if p.Name == player.Name then
+            if p.Name == plr.Name then
                 return (p.PlayerType.Value == 1 and "Left") or "Right"
             end
         end
     end
     for _, v in pairs(game.ReplicatedStorage.Matches:GetChildren()) do
         if v.Participants.Value == nil then
-            local isOwner = v.Owner.Value and v.Owner.Value.Name == player.Name
-            local isOpponent = v.Opponent.Value and v.Opponent.Value.Name == player.Name
-            if isOwner or isOpponent then
-                local pt = isOwner and v.Owner.PlayerType.Value or v.Opponent.PlayerType.Value
-                return (pt == 1 and "Left") or "Right"
+            local owner = v.Owner.Value
+            local opp = v.Opponent.Value
+            if owner and owner.Name == plr.Name then
+                return (owner.PlayerType.Value == 1 and "Left") or "Right"
+            elseif opp and opp.Name == plr.Name then
+                return (opp.PlayerType.Value == 1 and "Left") or "Right"
             end
         end
     end
@@ -74,67 +75,65 @@ local function getSide(player)
 end
 
 ----------------------------------------------------------------
--- ARROW GUI PARSING
+-- ARROW GUI HOOK
 ----------------------------------------------------------------
-local function hookArrowGui(arrowGui, side)
-    -- HIT ARROWS
-    local main = arrowGui[side]:WaitForChild("MainArrowContainer")
+local function hookArrowGui(gui, side)
+    local main = gui[side]:WaitForChild("MainArrowContainer")
     for _, a in pairs(main:GetChildren()) do
         hitArrows[a.Name] = a
     end
 
-    -- NOTES
-    for _, col in pairs(arrowGui[side].Notes:GetChildren()) do
-        col.ChildAdded:Connect(function(note)
-            if note:IsA("ImageLabel") or note.Name == "LongNote" then
-                table.insert(notes, {note, col.Name})
+    for _, col in pairs(gui[side].Notes:GetChildren()) do
+        col.ChildAdded:Connect(function(n)
+            if n:IsA("ImageLabel") or n.Name == "LongNote" then
+                table.insert(notes, {n, col.Name})
             end
         end)
     end
 end
 
 ----------------------------------------------------------------
--- MAIN TOGGLE
+-- TOGGLE
 ----------------------------------------------------------------
 Tab:AddToggle({
     Name = "Auto Play 4K",
     Default = false,
-    Callback = function(Value)
-        if not Value then
+    Callback = function(val)
+        if not val then
             getgenv().restartautoplayss()
             return
         end
         if playing then return end
         playing = true
 
-        local player = game.Players.LocalPlayer
-        local side = getSide(player)
+        local plr = game.Players.LocalPlayer
+        local side = getSide(plr)
 
-        -- Existing ArrowGui
-        local gui = player.PlayerGui.ScreenGui:FindFirstChild("ArrowGui", true)
-        if gui then
-            hookArrowGui(gui, side)
+        local existing = plr.PlayerGui.ScreenGui:FindFirstChild("ArrowGui", true)
+        if existing then
+            hookArrowGui(existing, side)
         end
 
-        -- New ArrowGui
-        guiConn = player.PlayerGui.ScreenGui.ChildAdded:Connect(function(c)
+        guiConn = plr.PlayerGui.ScreenGui.ChildAdded:Connect(function(c)
             if c.Name == "ArrowGui" then
                 hookArrowGui(c, side)
             end
         end)
 
         ----------------------------------------------------------------
-        -- RENDER LOOP
+        -- MAIN LOOP
         ----------------------------------------------------------------
         rsConn = game:GetService("RunService").RenderStepped:Connect(function()
+            -- NOTE HIT
             for i, v in pairs(notes) do
                 local note = v[1]
                 local dir = v[2]
+                local arrow = hitArrows[dir]
 
-                if note and note.Parent and hitArrows[dir] then
-                    local hitY = hitArrows[dir].AbsolutePosition.Y
-                    local noteY = note.AbsolutePosition.Y
-                    local dist = math.abs(hitY - noteY)
+                if note and note.Parent and arrow then
+                    local dist = math.abs(
+                        arrow.AbsolutePosition.Y - note.AbsolutePosition.Y
+                    )
 
                     if dist <= 20 then
                         local kb = keybinds[dup[dir]]
@@ -145,10 +144,13 @@ Tab:AddToggle({
                             keyrelease(kb)
                             notes[i] = nil
 
-                        -- LONG NOTE
+                        -- LONG NOTE (BAŞLAT)
                         else
-                            if not holdingNotes[note] then
-                                holdingNotes[note] = kb
+                            if not activeHolds[note] then
+                                activeHolds[note] = {
+                                    key = kb,
+                                    arrow = arrow
+                                }
                                 keypress(kb)
                             end
                         end
@@ -158,11 +160,19 @@ Tab:AddToggle({
                 end
             end
 
-            -- RELEASE FINISHED LONG NOTES
-            for note, kb in pairs(holdingNotes) do
+            -- LONG NOTE BİTİŞ
+            for note, data in pairs(activeHolds) do
                 if not note or not note.Parent then
-                    keyrelease(kb)
-                    holdingNotes[note] = nil
+                    keyrelease(data.key)
+                    activeHolds[note] = nil
+                else
+                    local bottom = note.AbsolutePosition.Y + note.AbsoluteSize.Y
+                    local hitY = data.arrow.AbsolutePosition.Y
+
+                    if bottom > hitY + 10 then
+                        keyrelease(data.key)
+                        activeHolds[note] = nil
+                    end
                 end
             end
         end)
