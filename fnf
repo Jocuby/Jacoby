@@ -2,7 +2,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jen
 
 local Window = OrionLib:MakeWindow({
     Name = "Jacob Hub : Monday Morning Misery",
-    IntroText = "Jacob Hub",
+    IntroText = "Jacob's Crib",
     HidePremium = false,
     SaveConfig = true,
     ConfigFolder = "OrionTest"
@@ -139,7 +139,7 @@ Tab:AddToggle({
 								alreadypressed[note] = true
 
 								if note.Name == "LongNote" then
-									task.delay(0.15, function()
+									task.delay(0.45, function()
 										keyrelease(kb)
 									end)
 								else
