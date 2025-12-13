@@ -139,17 +139,17 @@ Tab:AddToggle({
 								alreadypressed[note] = true
 
 								if note.Name == "LongNote" then
-									task.delay(0.45, function()
+									task.delay(0.8, function()
 										keyrelease(kb)
 									end)
 								else
 									keyrelease(kb)
 								end
 							end
-							toremove[i] = false
+							toremove[i] = true
 						end
 					else
-						toremove[i] = false
+						toremove[i] = true
 					end
 				end
 
