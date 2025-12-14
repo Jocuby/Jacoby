@@ -16,7 +16,7 @@ local Tab = Window:MakeTab({
 
 Tab:AddLabel("This only works at 4k. Have fun!")
 
-local playing = false
+local playing = true
 getgenv().restartautoplayss = function()
 	if getgenv().ors then
 		getgenv().ors:Disconnect()
