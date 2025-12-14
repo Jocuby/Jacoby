@@ -1,182 +1,164 @@
--- OrionLib
-local OrionLib = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/jensonhirst/Orion/main/source"
-))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
 local Window = OrionLib:MakeWindow({
-    Name = "Jacob Hub : Monday Morning Misery",
-    IntroText = "Jacob's Crib",
+    Name = "Jeff Hub : Monday Morning Misery",
+    IntroText = "Jeff Hub",
     HidePremium = false,
     SaveConfig = true,
     ConfigFolder = "OrionTest"
 })
 
 local Tab = Window:MakeTab({
-    Name = "Main",
-    Icon = "rbxassetid://123798026223578",
-    PremiumOnly = false
+	Name = "Main",
+	Icon = "rbxassetid://123798026223578",
+	PremiumOnly = false
 })
 
-Tab:AddLabel("Auto Play 4K (Real Long Note Hold)")
+Tab:AddLabel("This only works at 4k. Have fun!")
 
-----------------------------------------------------------------
--- STATE
-----------------------------------------------------------------
 local playing = false
-local rsConn, guiConn
-
-local keybinds = {0x41, 0x53, 0x57, 0x44} -- A S W D
-local dup = {Left = 1, Down = 2, Up = 3, Right = 4}
-
-local notes = {}
-local hitArrows = {}
-local activeHolds = {}
-
-----------------------------------------------------------------
--- CLEANUP
-----------------------------------------------------------------
 getgenv().restartautoplayss = function()
-    if rsConn then rsConn:Disconnect() rsConn = nil end
-    if guiConn then guiConn:Disconnect() guiConn = nil end
-
-    for _, k in pairs(keybinds) do
-        keyrelease(k)
-    end
-
-    notes = {}
-    hitArrows = {}
-    activeHolds = {}
-    playing = false
+	if getgenv().ors then
+		getgenv().ors:Disconnect()
+		getgenv().ors = nil
+	end
+	if getgenv().newgui then
+		getgenv().newgui:Disconnect()
+		getgenv().newgui = nil
+	end
+	playing = false
 end
 
-----------------------------------------------------------------
--- SIDE DETECTION (ORİJİNALDEN KORUNDU)
-----------------------------------------------------------------
-local function getSide(plr)
-    for _, v in pairs(game.ReplicatedStorage.ComplexMatches:GetChildren()) do
-        for _, p in pairs(v:GetChildren()) do
-            if p.Name == plr.Name then
-                return (p.PlayerType.Value == 1 and "Left") or "Right"
-            end
-        end
-    end
-    for _, v in pairs(game.ReplicatedStorage.Matches:GetChildren()) do
-        if v.Participants.Value == nil then
-            local owner = v.Owner.Value
-            local opp = v.Opponent.Value
-            if owner and owner.Name == plr.Name then
-                return (owner.PlayerType.Value == 1 and "Left") or "Right"
-            elseif opp and opp.Name == plr.Name then
-                return (opp.PlayerType.Value == 1 and "Left") or "Right"
-            end
-        end
-    end
-    return "Right"
-end
-
-----------------------------------------------------------------
--- ARROW GUI HOOK
-----------------------------------------------------------------
-local function hookArrowGui(gui, side)
-    local main = gui[side]:WaitForChild("MainArrowContainer")
-    for _, a in pairs(main:GetChildren()) do
-        hitArrows[a.Name] = a
-    end
-
-    for _, col in pairs(gui[side].Notes:GetChildren()) do
-        col.ChildAdded:Connect(function(n)
-            if n:IsA("ImageLabel") or n.Name == "LongNote" then
-                table.insert(notes, {n, col.Name})
-            end
-        end)
-    end
-end
-
-----------------------------------------------------------------
--- TOGGLE
-----------------------------------------------------------------
 Tab:AddToggle({
-    Name = "Auto Play 4K",
-    Default = false,
-    Callback = function(val)
-        if not val then
-            getgenv().restartautoplayss()
-            return
-        end
-        if playing then return end
-        playing = true
+	Name = "Auto Play 4k",
+	Default = false,
+	Callback = function(Value)
+		if not Value then
+			getgenv().restartautoplayss()
+			return
+		end
+		if playing then return end
+		playing = true
 
-        local plr = game.Players.LocalPlayer
-        local side = getSide(plr)
+		local keybinds = {0x41, 0x53, 0x57, 0x44} -- D, F, J, K
+		local localplr = game.Players.LocalPlayer
 
-        local existing = plr.PlayerGui.ScreenGui:FindFirstChild("ArrowGui", true)
-        if existing then
-            hookArrowGui(existing, side)
-        end
+		local notes = {}
+		local hitnotes = {}
+		local toremove = {}
+		local alreadypressed = {}
+		local dup = {Left = 1, Down = 2, Up = 3, Right = 4}
+		local side = "Right"
+		local upscroll = false
 
-        guiConn = plr.PlayerGui.ScreenGui.ChildAdded:Connect(function(c)
-            if c.Name == "ArrowGui" then
-                hookArrowGui(c, side)
-            end
-        end)
+		local function getside()
+			for _, v in pairs(game.ReplicatedStorage.ComplexMatches:GetChildren()) do
+				for _, p in pairs(v:GetChildren()) do
+					if p.Name == localplr.Name then
+						side = (p.PlayerType.Value == 1 and "Left") or "Right"
+					end
+				end
+			end
+			for _, v in pairs(game.ReplicatedStorage.Matches:GetChildren()) do
+				if v.Participants.Value == nil then
+					local isOwner = v.Owner.Value and v.Owner.Value.Name == localplr.Name
+					local isOpponent = v.Opponent.Value and v.Opponent.Value.Name == localplr.Name
+					if isOwner or isOpponent then
+						local ptype = isOwner and v.Owner.PlayerType.Value or v.Opponent.PlayerType.Value
+						side = (ptype == 1 and "Left") or "Right"
+					end
+				end
+			end
+		end
 
-        ----------------------------------------------------------------
-        -- MAIN LOOP
-        ----------------------------------------------------------------
-        rsConn = game:GetService("RunService").RenderStepped:Connect(function()
-            -- NOTE HIT
-            for i, v in pairs(notes) do
-                local note = v[1]
-                local dir = v[2]
-                local arrow = hitArrows[dir]
+		local function docol(v)
+			if v:IsA("Frame") then
+				local cnum = v.Name
+				v.ChildAdded:Connect(function(c)
+					if c:IsA("ImageLabel") or c.Name == "LongNote" then
+						table.insert(notes, {c, cnum})
+					end
+				end)
+			end
+		end
 
-                if note and note.Parent and arrow then
-                    local dist = math.abs(
-                        arrow.AbsolutePosition.Y - note.AbsolutePosition.Y
-                    )
+		local function domn(v)
+			hitnotes[v.Name] = v
+		end
 
-                    if dist <= 20 then
-                        local kb = keybinds[dup[dir]]
+		local function dag(v)
+			getside()
+			for _, dir in pairs(v[side].Notes:GetChildren()) do
+				docol(dir)
+			end
+			coroutine.wrap(function()
+				v[side]:WaitForChild("MainArrowContainer", math.huge)
+				for _, arrow in pairs(v[side].MainArrowContainer:GetChildren()) do
+					domn(arrow)
+				end
+			end)()
+		end
 
-                        -- NORMAL NOTE
-                        if note.Name ~= "LongNote" then
-                            keypress(kb)
-                            keyrelease(kb)
-                            notes[i] = nil
+		local arrowgui = localplr.PlayerGui.ScreenGui:FindFirstChild("ArrowGui", true)
+		if arrowgui and not arrowgui.Parent:FindFirstChild("Bop") then
+			dag(arrowgui)
+		end
 
-                        -- LONG NOTE (BAŞLAT)
-                        else
-                            if not activeHolds[note] then
-                                activeHolds[note] = {
-                                    key = kb,
-                                    arrow = arrow
-                                }
-                                keypress(kb)
-                            end
-                        end
-                    end
-                else
-                    notes[i] = nil
-                end
-            end
+		getgenv().newgui = localplr.PlayerGui.ScreenGui:FindFirstChild("Bop", true).ChildAdded:Connect(function(child)
+			if child.Name == "ArrowGui" then
+				dag(child)
+			end
+		end)
 
-            -- LONG NOTE BİTİŞ
-            for note, data in pairs(activeHolds) do
-                if not note or not note.Parent then
-                    keyrelease(data.key)
-                    activeHolds[note] = nil
-                else
-                    local bottom = note.AbsolutePosition.Y + note.AbsoluteSize.Y
-                    local hitY = data.arrow.AbsolutePosition.Y
+		getgenv().ors = game:GetService("RunService").RenderStepped:Connect(function()
+			for _, v in pairs(keybinds) do
+				keyrelease(v)
+			end
 
-                    if bottom > hitY + 10 then
-                        keyrelease(data.key)
-                        activeHolds[note] = nil
-                    end
-                end
-            end
-        end)
-    end
+			local arrowgui = localplr.PlayerGui.ScreenGui:FindFirstChild("ArrowGui", true)
+			if arrowgui and arrowgui:FindFirstChild(side) and arrowgui[side]:FindFirstChild("MainArrowContainer") then
+				local hitContainer = arrowgui[side].MainArrowContainer
+				if #hitContainer:GetChildren() == 0 then return end
+
+				upscroll = hitContainer:GetChildren()[1].AbsolutePosition.Y < localplr.PlayerGui.ScreenGui.AbsoluteSize.Y / 2
+				local cnotes = notes
+
+				for i, v in pairs(cnotes) do
+					local note = v[1]
+					local direction = v[2]
+					if typeof(note) == "Instance" and note and note.Parent ~= nil then
+						local hitY = hitnotes[direction].AbsolutePosition.Y
+						local noteY = note.AbsolutePosition.Y
+						local distance = math.abs(hitY - noteY)
+
+						local posCheck = distance <= 20
+						if posCheck then
+							local kb = keybinds[dup[direction]]
+							if not alreadypressed[note] then
+								keypress(kb)
+								alreadypressed[note] = true
+
+								if note.Name == "LongNote" then
+									task.delay(0.15, function()
+										keyrelease(kb)
+									end)
+								else
+									keyrelease(kb)
+								end
+							end
+							toremove[i] = true
+						end
+					else
+						toremove[i] = true
+					end
+				end
+
+				for i in pairs(toremove) do
+					notes[i] = nil
+					toremove[i] = nil
+				end
+				alreadypressed = {}
+			end
+		end)
+	end    
 })
-
-OrionLib:Init()
