@@ -16,7 +16,7 @@ TDS:GameInfo("Simplicity", {
     HiddenEnemies = true, 
     Glass = true, 
     ExplodingEnemies = false,
-    Limitation = false, 
+    Limitation = false,
     Committed = true, 
     HealthyEnemies = false,
     SpeedyEnemies = false,
