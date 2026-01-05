@@ -10,8 +10,8 @@ _G.Webhook = "YOUR-WEBHOOK-URL-HERE"
 local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%20test.lua"))()
 
 -- [[ START STRATEGY ]]
-TDS:Loadout("Scout", "Hacker", "DJ Booth", "Warlock", "Military Base")
+TDS:Loadout("Military Base", "Ranger", "DJ Booth", "Commander", "Warlock")
 
-wait(1200)
+wait(2400)
 
-TDS:Loadout("Turret", "Hacker", "DJ Booth", "Warlock", "Military Base")
+TDS:Loadout("Military Base", "Turret", "DJ Booth", "Commander", "Warlock")
