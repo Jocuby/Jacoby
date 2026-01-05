@@ -1,0 +1,17 @@
+-- [[ CONFIGURATION ]]
+_G.AutoPickups = true
+_G.AntiLag = false
+
+-- [[ WEBHOOK SETTINGS ]]
+_G.SendWebhook = false -- Set to true to enable notifications
+_G.Webhook = "YOUR-WEBHOOK-URL-HERE" 
+
+-- [[ INITIALIZE LIBRARY ]]
+local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%20test.lua"))()
+
+-- [[ START STRATEGY ]]
+TDS:Loadout("Scout", "Hacker", "DJ Booth", "Warlock", "Military Base")
+
+wait(1200)
+
+TDS:Loadout("Turret", "Hacker", "DJ Booth", "Warlock", "Military Base")
