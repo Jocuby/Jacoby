@@ -12,6 +12,6 @@ local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/
 -- [[ START STRATEGY ]]
 TDS:Loadout("Scout", "Firework Technician", "Spotlight Tech", "Warlock", "Accelerator")
 
-wait(1500)
+wait(15)
 
 TDS:Loadout("Scout", "Turret", " Ranger", "Warlock", "Accelerator")
