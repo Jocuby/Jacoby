@@ -1,17 +1,59 @@
--- [[ CONFIGURATION ]]
-_G.AutoPickups = true
-_G.AntiLag = false
+--           TName       X        Y     Z
+PlaceTower("Engineer", -29.541,  70  ,-2.830) -- 1
+PlaceTower("Engineer", -29.541,  70  ,-2.831) -- 2
+PlaceTower("Engineer", -29.541,  70  ,-2.832) -- 3
+PlaceTower("Engineer", -29.541,  70  ,-2.833) -- 4
+PlaceTower("Engineer", -29.541,  70  ,-2.834) -- 5
+PlaceTower("Engineer", -29.541,  70  ,-2.835) -- 6
+PlaceTower("Engineer", -29.541,  70  ,-2.836) -- 7
 
--- [[ WEBHOOK SETTINGS ]]
-_G.SendWebhook = false -- Set to true to enable notifications
-_G.Webhook = "YOUR-WEBHOOK-URL-HERE" 
 
--- [[ INITIALIZE LIBRARY ]]
-local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%20test.lua"))()
+-- Engineer 1
+--            X         Z
+UpgradeTower(-29.541, -2.830)
+UpgradeTower(-29.541, -2.830)
+UpgradeTower(-29.541, -2.830)
+UpgradeTower(-29.541, -2.830)
+UpgradeTower(-29.541, -2.830)
+UpgradeTower(-29.541, -2.830)
 
--- [[ START STRATEGY ]]
-TDS:Loadout("Scout", "Firework Technician", "Spotlight Tech", "Warlock", "Accelerator")
+-- Engineer 2
+UpgradeTower(-29.541, -2.831)
+UpgradeTower(-29.541, -2.831)
+UpgradeTower(-29.541, -2.831)
+UpgradeTower(-29.541, -2.831)
+UpgradeTower(-29.541, -2.831)
+UpgradeTower(-29.541, -2.831)
 
-wait(15)
+-- Engineer 3
+UpgradeTower(-29.541, -2.832)
+UpgradeTower(-29.541, -2.832)
+UpgradeTower(-29.541, -2.832)
+UpgradeTower(-29.541, -2.832)
+UpgradeTower(-29.541, -2.832)
+UpgradeTower(-29.541, -2.832)
 
-TDS:Loadout("Scout", "Turret", " Ranger", "Warlock", "Accelerator")
+-- Engineer 4
+UpgradeTower(-29.541, -2.833)
+UpgradeTower(-29.541, -2.833)
+UpgradeTower(-29.541, -2.833)
+UpgradeTower(-29.541, -2.833)
+UpgradeTower(-29.541, -2.833)
+UpgradeTower(-29.541, -2.833)
+
+-- Engineer 5
+UpgradeTower(-29.541, -2.834)
+UpgradeTower(-29.541, -2.834)
+UpgradeTower(-29.541, -2.834)
+UpgradeTower(-29.541, -2.834)
+UpgradeTower(-29.541, -2.834)
+UpgradeTower(-29.541, -2.834)
+
+
+-- Engineer 6
+UpgradeTower(-29.541, -2.835)
+UpgradeTower(-29.541, -2.835)
+UpgradeTower(-29.541, -2.835)
+UpgradeTower(-29.541, -2.835)
+UpgradeTower(-29.541, -2.835)
+UpgradeTower(-29.541, -2.835)
