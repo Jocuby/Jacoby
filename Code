@@ -1,0 +1,1 @@
+require(game.ReplicatedStorage.Client.Interfaces.NewInterface.Controllers.ViewController):setView("Inventory")
