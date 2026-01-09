@@ -1,6 +1,7 @@
 -- [[ CONFIGURATION ]]
 _G.AutoPickups = true
 _G.AntiLag = true
+_G.ClaimRewards = true
 
 -- [[ WEBHOOK SETTINGS ]]
 _G.SendWebhook = false -- Set to true to enable notifications
@@ -13,11 +14,11 @@ local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/
 TDS:Loadout("Scout", "Accelerator", "Mercenary Base", "Hacker", "Warlock")
 TDS:Mode("Frost")
 TDS:GameInfo("Simplicity", {
-    HiddenEnemies = true, 
+    HiddenEnemies = false, 
     Glass = true, 
     ExplodingEnemies = false,
-    Limitation = false,
-    Committed = true, 
+    Limitation = false, 
+    Committed = false, 
     HealthyEnemies = false,
     SpeedyEnemies = false,
     Quarantine = false, 
@@ -110,7 +111,7 @@ TDS:Place("Mercenary Base", 20.68, 1.00, 12.67) -- 20
 TDS:Upgrade(20)
 TDS:Upgrade(20)
 TDS:Upgrade(20)
-TDS:Place("Mercenary Base", 25.79, 1.00, 18.40) -- 21
+TDS:Place("Mercenary Base", -6.10374212, 60, -3.54938531) -- 21
 TDS:Upgrade(21)
 TDS:Upgrade(21)
 TDS:Upgrade(21)
@@ -241,27 +242,46 @@ TDS:SetOption(19, "Unit 3", "Riot Guard", 40)
 TDS:SetOption(20, "Unit 1", "Riot Guard", 40)
 TDS:SetOption(20, "Unit 2", "Riot Guard", 40)
 TDS:SetOption(20, "Unit 3", "Riot Guard", 40)
-TDS:SetOption(21, "Unit 1", "Riot Guard", 40)
-TDS:SetOption(21, "Unit 2", "Riot Guard", 40)
-TDS:SetOption(21, "Unit 3", "Riot Guard", 40)
 
-TDS:Loadout("Turret", "Accelerator", "Mercenary Base", "Hacker", "Warlock")
+TDS:Loadout("Turret", "Commander", "Scout", "Accelerator", "Mercenary Base")
 
-TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 25
+TDS:Place("Commander", -9.51527023, 60, -0.76658535) -- 34
 TDS:Upgrade(34)
 TDS:Upgrade(34)
 TDS:Upgrade(34)
 TDS:Upgrade(34)
-TDS:Upgrade(34)
-TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 25
+
+TDS:Place("Commander", -9.51527023, 60, -0.76658535) -- 35
 TDS:Upgrade(35)
 TDS:Upgrade(35)
 TDS:Upgrade(35)
 TDS:Upgrade(35)
-TDS:Upgrade(35)
-TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 25
+
+TDS:Place("Commander", -9.51527023, 60, -0.76658535) -- 36
 TDS:Upgrade(36)
 TDS:Upgrade(36)
 TDS:Upgrade(36)
 TDS:Upgrade(36)
-TDS:Upgrade(36)
+
+TDS:AutoChain(36, 35, 34)
+
+TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 37
+TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 38
+TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 39
+
+TDS:Upgrade(37)
+TDS:Upgrade(37)
+TDS:Upgrade(38)
+TDS:Upgrade(38)
+TDS:Upgrade(39)
+TDS:Upgrade(39)
+TDS:Upgrade(37)
+TDS:Upgrade(37)
+TDS:Upgrade(38)
+TDS:Upgrade(38)
+TDS:Upgrade(39)
+TDS:Upgrade(39)
+TDS:Upgrade(38)
+TDS:Upgrade(39)
+TDS:Upgrade(37)
+
