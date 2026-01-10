@@ -1,6 +1,6 @@
 -- [[ CONFIGURATION ]]
 _G.AutoPickups = true
-_G.AntiLag = false
+_G.AntiLag = true
 _G.ClaimRewards = true
 
 -- [[ WEBHOOK SETTINGS ]]
@@ -11,14 +11,14 @@ _G.Webhook = "YOUR-WEBHOOK-URL-HERE"
 local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%20test.lua"))()
 
 -- [[ START STRATEGY ]]
-TDS:Loadout("Scout", "Accelerator", "Mercenary Base", "Hacker", "Warlock")
+TDS:Loadout("Accelerator", "Scout", "Mercenary Base", "Hacker", "Warlock")
 TDS:Mode("Frost")
 TDS:GameInfo("Simplicity", {
-    HiddenEnemies = true, 
+    HiddenEnemies = false, 
     Glass = true, 
     ExplodingEnemies = false,
     Limitation = false, 
-    Committed = true, 
+    Committed = false, 
     HealthyEnemies = false,
     SpeedyEnemies = false,
     Quarantine = false, 
@@ -29,12 +29,14 @@ TDS:GameInfo("Simplicity", {
     Inflation = false
 })
 
+TDS:AutoSkip("T")
+
 TDS:Place("Scout", -15.24, 1.00, -8.97) -- 1
 TDS:Place("Scout", -16.65, 1.00, -11.65) -- 2
 TDS:Place("Scout", -19.71, 1.00, -12.34) -- 3
 
-TDS:UnlockTimeScale()  -- Delete whole line to deactivate auto time-scale
-TDS:TimeScale(2)  -- Number = speed (0,0.5,1,1.5,2)
+-- TDS:UnlockTimeScale()  -- Delete whole line to deactivate auto time-scale
+-- TDS:TimeScale(2)  -- Number = speed (0,0.5,1,1.5,2)
 
 TDS:Place("Scout", -20.00, 1.00, -15.33) -- 4
 TDS:Place("Scout", -16.83, 1.00, -14.83) -- 5
@@ -166,6 +168,8 @@ TDS:Upgrade(23)
 TDS:Upgrade(24)
 TDS:Upgrade(25)
 
+TDS:AutoSkip("F")
+
 TDS:Loadout("Turret", "Commander", "DJ Booth", "Minigunner", "Accelerator")
 
 TDS:Place("DJ Booth", -6.10374212, 60, -3.54938531) -- 26
@@ -217,20 +221,12 @@ TDS:Upgrade(34)
 TDS:Upgrade(34)
 TDS:Upgrade(34)
 TDS:Upgrade(27)
-TDS:Upgrade(27)
-TDS:Upgrade(28)
 TDS:Upgrade(28)
 TDS:Upgrade(29)
-TDS:Upgrade(29)
-TDS:Upgrade(30)
 TDS:Upgrade(30)
 TDS:Upgrade(31)
-TDS:Upgrade(31)
-TDS:Upgrade(32)
 TDS:Upgrade(32)
 TDS:Upgrade(33)
-TDS:Upgrade(33)
-TDS:Upgrade(34)
 TDS:Upgrade(34)
 TDS:Upgrade(9)
 TDS:Upgrade(9)
@@ -252,34 +248,38 @@ TDS:Ability(8, "Hologram Tower", {
         Vector3.new(19.6996384, 3.46937752, 4.1759696),
     }
 }, true)
-TDS:SetOption(20, "Unit 1", "Riot Guard", 40)
-TDS:SetOption(20, "Unit 2", "Riot Guard", 40)
-TDS:SetOption(20, "Unit 3", "Riot Guard", 40)
-TDS:SetOption(21, "Unit 1", "Riot Guard", 40)
-TDS:SetOption(21, "Unit 2", "Riot Guard", 40)
-TDS:SetOption(21, "Unit 3", "Riot Guard", 40)
-
-TDS:SetOption(26, "Track", "Red")
 
 TDS:Place("Commander", -9.51527023, 60, -0.76658535) -- 35
-TDS:Upgrade(35)
-TDS:Upgrade(35)
 TDS:Upgrade(35)
 TDS:Upgrade(35)
 
 TDS:Place("Commander", -9.51527023, 60, -0.76658535) -- 36
 TDS:Upgrade(36)
 TDS:Upgrade(36)
-TDS:Upgrade(36)
-TDS:Upgrade(36)
 
 TDS:Place("Commander", -9.51527023, 60, -0.76658535) -- 37
 TDS:Upgrade(37)
 TDS:Upgrade(37)
-TDS:Upgrade(37)
-TDS:Upgrade(37)
 
 TDS:AutoChain(37, 36, 35)
+
+TDS:Upgrade(31)
+TDS:Upgrade(32)
+TDS:Upgrade(29)
+TDS:Upgrade(30)
+TDS:Upgrade(27)
+TDS:Upgrade(28)
+TDS:Upgrade(33)
+TDS:Upgrade(34)
+
+TDS:Upgrade(37)
+TDS:Upgrade(37)
+TDS:Upgrade(36)
+TDS:Upgrade(36)
+TDS:Upgrade(35)
+TDS:Upgrade(35)
+
+TDS:SetOption(26, "Track", "Red")
 
 TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 38
 TDS:Place("Turret", -9.51527023, 60, -0.76658535) -- 39
@@ -302,52 +302,60 @@ TDS:Upgrade(40)
 TDS:Upgrade(38)
 
 TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 41
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 42
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 43
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 44
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 45
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 46
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 47
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 48
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 49
-TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 50
+TDS:Upgrade(41)
+TDS:Upgrade(41)
+TDS:Upgrade(41)
+TDS:Upgrade(41)
 
-TDS:Upgrade(41)
-TDS:Upgrade(41)
-TDS:Upgrade(41)
-TDS:Upgrade(41)
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 42
 TDS:Upgrade(42)
 TDS:Upgrade(42)
 TDS:Upgrade(42)
 TDS:Upgrade(42)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 43
 TDS:Upgrade(43)
 TDS:Upgrade(43)
 TDS:Upgrade(43)
 TDS:Upgrade(43)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 44
 TDS:Upgrade(44)
 TDS:Upgrade(44)
 TDS:Upgrade(44)
 TDS:Upgrade(44)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 45
 TDS:Upgrade(45)
 TDS:Upgrade(45)
 TDS:Upgrade(45)
 TDS:Upgrade(45)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 46
 TDS:Upgrade(46)
 TDS:Upgrade(46)
 TDS:Upgrade(46)
 TDS:Upgrade(46)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 47
 TDS:Upgrade(47)
 TDS:Upgrade(47)
 TDS:Upgrade(47)
 TDS:Upgrade(47)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 48
 TDS:Upgrade(48)
 TDS:Upgrade(48)
 TDS:Upgrade(48)
 TDS:Upgrade(48)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 49
 TDS:Upgrade(49)
 TDS:Upgrade(49)
 TDS:Upgrade(49)
 TDS:Upgrade(49)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 50
 TDS:Upgrade(50)
 TDS:Upgrade(50)
 TDS:Upgrade(50)
