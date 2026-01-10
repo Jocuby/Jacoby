@@ -166,7 +166,7 @@ TDS:Upgrade(23)
 TDS:Upgrade(24)
 TDS:Upgrade(25)
 
-TDS:Loadout("Turret", "Commander", "DJ Booth", "Scout", "Accelerator")
+TDS:Loadout("Turret", "Commander", "DJ Booth", "Minigunner", "Accelerator")
 
 TDS:Place("DJ Booth", -6.10374212, 60, -3.54938531) -- 26
 TDS:Upgrade(26)
@@ -300,3 +300,55 @@ TDS:Upgrade(40)
 TDS:Upgrade(39)
 TDS:Upgrade(40)
 TDS:Upgrade(38)
+
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 41
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 42
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 43
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 44
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 45
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 46
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 47
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 48
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 49
+TDS:Place("Minigunner", -9.51527023, 60, -0.76658535) -- 50
+
+TDS:Upgrade(41)
+TDS:Upgrade(41)
+TDS:Upgrade(41)
+TDS:Upgrade(41)
+TDS:Upgrade(42)
+TDS:Upgrade(42)
+TDS:Upgrade(42)
+TDS:Upgrade(42)
+TDS:Upgrade(43)
+TDS:Upgrade(43)
+TDS:Upgrade(43)
+TDS:Upgrade(43)
+TDS:Upgrade(44)
+TDS:Upgrade(44)
+TDS:Upgrade(44)
+TDS:Upgrade(44)
+TDS:Upgrade(45)
+TDS:Upgrade(45)
+TDS:Upgrade(45)
+TDS:Upgrade(45)
+TDS:Upgrade(46)
+TDS:Upgrade(46)
+TDS:Upgrade(46)
+TDS:Upgrade(46)
+TDS:Upgrade(47)
+TDS:Upgrade(47)
+TDS:Upgrade(47)
+TDS:Upgrade(47)
+TDS:Upgrade(48)
+TDS:Upgrade(48)
+TDS:Upgrade(48)
+TDS:Upgrade(48)
+TDS:Upgrade(49)
+TDS:Upgrade(49)
+TDS:Upgrade(49)
+TDS:Upgrade(49)
+TDS:Upgrade(50)
+TDS:Upgrade(50)
+TDS:Upgrade(50)
+TDS:Upgrade(50)
