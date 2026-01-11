@@ -1,0 +1,73 @@
+-- [[ CONFIGURATION ]]
+_G.AutoPickups = true
+_G.AntiLag = false
+_G.ClaimRewards = true
+
+-- [[ WEBHOOK SETTINGS ]]
+_G.SendWebhook = false -- Set to true to enable notifications
+_G.Webhook = "YOUR-WEBHOOK-URL-HERE" 
+
+-- [[ INITIALIZE LIBRARY ]]
+local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%20test.lua"))()
+
+-- [[ START STRATEGY ]]
+TDS:Loadout("Brawler")
+TDS:Mode("Easy")
+TDS:GameInfo("Retro Stained Temple", {
+    HiddenEnemies = false, 
+    Glass = true, 
+    ExplodingEnemies = true,
+    Limitation = false, 
+    Committed = true, 
+    HealthyEnemies = false,
+    SpeedyEnemies = false,
+    Quarantine = false, 
+    Fog = false,
+    FlyingEnemies = false, 
+    Broke = false, 
+    Jailed = false, 
+    Inflation = false
+})
+
+TDS:AutoSkip("T")
+
+TDS:Place("Brawler", -5.499,1.000,-23.186) -- 1
+TDS:Place("Brawler", -5.096,1.000,-26.359) -- 2
+TDS:Place("Brawler", -2.456,1.000,-23.285) -- 3
+
+-- TDS:UnlockTimeScale()  -- Delete whole line to deactivate auto time-scale
+-- TDS:TimeScale(2)  -- Number = speed (0,0.5,1,1.5,2)
+
+TDS:Place("Scout", -2.002,1.000,-26.365) -- 4
+TDS:Place("Scout", -0.716,1.000,-23.242) -- 5
+TDS:Place("Scout", 1.299,1.000,-26.383) -- 6
+TDS:Upgrade(1)
+TDS:Upgrade(2)
+TDS:Upgrade(3)
+TDS:Upgrade(4)
+TDS:Upgrade(5)
+TDS:Upgrade(6)
+TDS:Upgrade(1)
+TDS:Upgrade(2)
+TDS:Upgrade(3)
+TDS:Upgrade(4)
+TDS:Upgrade(5)
+TDS:Upgrade(6)
+TDS:Upgrade(1)
+TDS:Upgrade(2)
+TDS:Upgrade(3)
+TDS:Upgrade(4)
+TDS:Upgrade(5)
+TDS:Upgrade(6)
+TDS:Upgrade(1)
+TDS:Upgrade(2)
+TDS:Upgrade(3)
+TDS:Upgrade(4)
+TDS:Upgrade(5)
+TDS:Upgrade(6)
+TDS:Upgrade(1)
+TDS:Upgrade(2)
+TDS:Upgrade(3)
+TDS:Upgrade(4)
+TDS:Upgrade(5)
+TDS:Upgrade(6)
