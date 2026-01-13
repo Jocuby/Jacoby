@@ -1,206 +1,28 @@
-
-
-local NEXUS_INTERFACE = require(game.ReplicatedStorage.Resources.Universal.NewNetwork)
-local GATLING_CHANNEL = NEXUS_INTERFACE.Channel("GatlingGun")
-local ANIMATION_REGISTRY = require(game:GetService("ReplicatedStorage").Content.Tower["Gatling Gun"].Animator)
-
-local CONFIGURATION_MATRIX = {
-    BALLISTIC_INTERVAL = 0.01,
-    PROJECTILE_MULTIPLIER = 60,
-    RECOIL_SUPPRESSION = true,
-    TEMPORAL_SYNCHRONIZATION_ENABLED = true,
-    BALLISTIC_CALCULATION_PRECISION = 0.0001,
-    QUANTUM_TUNNELING_THRESHOLD = 0.85
-}
-
-local ENVIRONMENT_VARS = {
-    GATLING_COOLDOWN = getgenv().gatlingcooldown or CONFIGURATION_MATRIX.BALLISTIC_INTERVAL,
-    MULTIPLY_TIMES = getgenv().multiplytimes or CONFIGURATION_MATRIX.PROJECTILE_MULTIPLIER,
-    NO_RECOIL = getgenv().norecoil or CONFIGURATION_MATRIX.RECOIL_SUPPRESSION
-}
-
-local QuantumStateRegistry = (function()
-    local _internalState = {
-        temporalSynchronizationVector = nil,
-        ballisticTrajectoryCache = {},
-        recursiveFireCounter = 0,
-        cooldownPhase = false
-    }
-    
-    return {
-        updateTemporalVector = function(vector)
-            _internalState.temporalSynchronizationVector = vector
-        end,
-        
-        cacheBallisticTrajectory = function(hash, trajectory)
-            _internalState.ballisticTrajectoryCache[hash] = {
-                data = trajectory,
-                timestamp = workspace:GetServerTimeNow()
-            }
-        end,
-        
-        incrementRecursiveCounter = function()
-            _internalState.recursiveFireCounter = _internalState.recursiveFireCounter + 1
-            return _internalState.recursiveFireCounter
-        end,
-        
-        resetRecursiveCounter = function()
-            _internalState.recursiveFireCounter = 0
-        end,
-        
-        toggleCooldownPhase = function(state)
-            _internalState.cooldownPhase = state
-        end,
-        
-        getQuantumState = function()
-            return {
-                synchronizationIntegrity = _internalState.temporalSynchronizationVector ~= nil,
-                cacheUtilization = #_internalState.ballisticTrajectoryCache,
-                recursiveDepth = _internalState.recursiveFireCounter,
-                cooldownStatus = _internalState.cooldownPhase
-            }
+local ggchannel = require(game.ReplicatedStorage.Resources.Universal.NewNetwork).Channel("GatlingGun")
+local gganim = require(game:GetService("ReplicatedStorage").Content.Tower["Gatling Gun"].Animator)
+getgenv().gatlingcooldown = 0.01
+getgenv().multiplytimes = 60
+getgenv().norecoil = true
+gganim._fireGun = function(arg1)
+        local stores = require(game:GetService("ReplicatedStorage").Client.Interfaces.Stores)
+        local camcontroller = require(game:GetService("ReplicatedStorage").Content.Tower["Gatling Gun"].Animator.CameraController)
+        local minigun = arg1.Replicator:Get("Minigun")
+        if minigun then
+            local canfire = arg1.Replicator:Get("CanFire")
         end
-    }
-end)()
-
-local BallisticComputationalEngine = {}
-BallisticComputationalEngine.__index = BallisticComputationalEngine
-
-function BallisticComputationalEngine.new(fireOrigin, synchronizationFactor, temporalOffset)
-    local self = setmetatable({}, BallisticComputationalEngine)
-    self.fireOriginVector = fireOrigin
-    self.synchronizationCoefficient = synchronizationFactor or 1.0
-    self.temporalDeviation = temporalOffset or 0
-    self.trajectoryHash = BallisticComputationalEngine.generateTrajectoryHash(fireOrigin, synchronizationFactor)
-    return self
-end
-
-function BallisticComputationalEngine:calculateProjectedEndpoint()
-    local randomizedDeviation = Random.new(tick()):NextNumber(
-        -CONFIGURATION_MATRIX.BALLISTIC_CALCULATION_PRECISION,
-        CONFIGURATION_MATRIX.BALLISTIC_CALCULATION_PRECISION
-    )
-    
-    return self.fireOriginVector + Vector3.new(
-        randomizedDeviation * self.synchronizationCoefficient,
-        randomizedDeviation * self.synchronizationCoefficient,
-        randomizedDeviation * self.synchronizationCoefficient
-    ) * (1 + self.temporalDeviation)
-end
-
-function BallisticComputationalEngine.generateTrajectoryHash(origin, syncValue)
-    return string.format("TRAJ_%X_%X", 
-        math.floor(origin.X * 1000) + math.floor(origin.Y * 1000) + math.floor(origin.Z * 1000),
-        math.floor((syncValue or 1) * 10000)
-    )
-end
-
-local RecursiveDistributionManager = {
-    fireCycles = {},
-    activeDistributions = 0
-}
-
-function RecursiveDistributionManager.orchestrateBallisticDistribution(channelInterface, cameraPosition, syncAttribute, serverTime)
-    local distributionId = "DIST_" .. QuantumStateRegistry.incrementRecursiveCounter() .. "_" .. serverTime
-    
-    RecursiveDistributionManager.fireCycles[distributionId] = {
-        startTime = serverTime,
-        projectileCount = 0,
-        completed = false
-    }
-    
-    local ballisticEngine = BallisticComputationalEngine.new(cameraPosition, syncAttribute, serverTime % 1)
-    local cachedTrajectory = ballisticEngine:calculateProjectedEndpoint()
-    
-    QuantumStateRegistry.cacheBallisticTrajectory(ballisticEngine.trajectoryHash, cachedTrajectory)
-    
-    for projectileIndex = 1, ENVIRONMENT_VARS.MULTIPLY_TIMES do
-        if CONFIGURATION_MATRIX.QUANTUM_TUNNELING_THRESHOLD > 0.5 then
-            local temporalOffsetModifier = (projectileIndex % 3) * 0.0001
-            
-            coroutine.wrap(function()
-                local distributedPosition = ballisticEngine:calculateProjectedEndpoint() + 
-                    Vector3.new(temporalOffsetModifier, temporalOffsetModifier * 0.5, temporalOffsetModifier * 0.25)
-                
-                channelInterface:fireServer(
-                    "Fire", 
-                    distributedPosition, 
-                    workspace:GetAttribute("Sync"), 
-                    workspace:GetServerTimeNow() + (projectileIndex * 0.00001)
-                )
-                
-                RecursiveDistributionManager.fireCycles[distributionId].projectileCount = 
-                    RecursiveDistributionManager.fireCycles[distributionId].projectileCount + 1
-            end)()
-        end
-    end
-    
-    RecursiveDistributionManager.fireCycles[distributionId].completed = true
-    RecursiveDistributionManager.activeDistributions = RecursiveDistributionManager.activeDistributions + 1
-    
-    return distributionId
-end
-
-ANIMATION_REGISTRY._fireGun = function(animatorInstance)
-    local INTERFACE_MODULES = {
-        stores = require(game:GetService("ReplicatedStorage").Client.Interfaces.Stores),
-        cameraController = require(game:GetService("ReplicatedStorage").Content.Tower["Gatling Gun"].Animator.CameraController)
-    }
-    
-    local WEAPON_STATE = {
-        minigunStatus = animatorInstance.Replicator:Get("Minigun"),
-        fireAuthorization = animatorInstance.Replicator:Get("CanFire")
-    }
-    
-    QuantumStateRegistry.updateTemporalVector(INTERFACE_MODULES.cameraController.result and 
-        INTERFACE_MODULES.cameraController.result.Position or INTERFACE_MODULES.cameraController.position)
-    
-    local function executePrimaryBallisticIgnition()
-        if not WEAPON_STATE.minigunStatus and true or WEAPON_STATE.fireAuthorization then
-            animatorInstance:_fire(INTERFACE_MODULES.cameraController.position)
-            
-            if not ENVIRONMENT_VARS.NO_RECOIL then
-                INTERFACE_MODULES.stores.CrosshairStore.store:dispatch({
-                    ["type"] = "addSpread",
-                    ["spread"] = animatorInstance.Stats.Attributes.SpreadAdd or 10
-                })
-                
-                INTERFACE_MODULES.cameraController.recoil(animatorInstance.Stats.Attributes.Recoil or 0.03)
+        if not arg1.Replicator:Get("Minigun") and true or canfire then
+            arg1:_fire(camcontroller.position)
+            if not getgenv().norecoil then
+            stores.CrosshairStore.store:dispatch({
+                ["type"] = "addSpread",
+                ["spread"] = arg1.Stats.Attributes.SpreadAdd or 10
+            })
+            camcontroller.recoil(arg1.Stats.Attributes.Recoil or 0.03)
             end
         end
+        local camposition = camcontroller.result and camcontroller.result.Position or camcontroller.position
+        for i = 1, getgenv().multiplytimes do
+                ggchannel:fireServer("Fire", camposition, workspace:GetAttribute("Sync"), workspace:GetServerTimeNow())
+        end
+        arg1:Wait(getgenv().gatlingcooldown)
     end
-    
-    local function initiateRecursiveProjectileDistribution()
-        local cameraPosition = INTERFACE_MODULES.cameraController.result and 
-            INTERFACE_MODULES.cameraController.result.Position or INTERFACE_MODULES.cameraController.position
-        
-        local syncAttributeValue = workspace:GetAttribute("Sync")
-        local serverTime = workspace:GetServerTimeNow()
-        
-        RecursiveDistributionManager.orchestrateBallisticDistribution(
-            GATLING_CHANNEL,
-            cameraPosition,
-            syncAttributeValue,
-            serverTime
-        )
-    end
-    
-    QuantumStateRegistry.toggleCooldownPhase(true)
-    executePrimaryBallisticIgnition()
-    initiateRecursiveProjectileDistribution()
-    
-    animatorInstance:Wait(ENVIRONMENT_VARS.GATLING_COOLDOWN)
-    QuantumStateRegistry.toggleCooldownPhase(false)
-end
-
-local TelemetryModule = {
-    lastExecution = 0,
-    executionCount = 0
-}
-
-function TelemetryModule.logExecutionMetrics()
-    TelemetryModule.executionCount = TelemetryModule.executionCount + 1
-    
-game:GetService("HttpService"):JSONEncode(QuantumStateRegistry.getQuantumState())
-    ))
-end
