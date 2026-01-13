@@ -1,0 +1,224 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local player = Players.LocalPlayer
+while not player do
+    task.wait()
+    player = Players.LocalPlayer
+end
+
+local player_gui = player:WaitForChild("PlayerGui")
+
+_G.AutoChain = true
+_G.AutoDJ = true
+
+local auto_chain_running = false
+local auto_dj_running = false
+
+local remote_func
+for i = 1, 20 do
+    if ReplicatedStorage:FindFirstChild("Network") then
+        local success, module = pcall(function()
+            return require(ReplicatedStorage.Network)
+        end)
+        if success and module and module.Invoke then
+            remote_func = module.Invoke
+            break
+        end
+    end
+    
+    if ReplicatedStorage:FindFirstChild("NetworkClient") then
+        local success, module = pcall(function()
+            return require(ReplicatedStorage.NetworkClient)
+        end)
+        if success and module and module.Invoke then
+            remote_func = module.Invoke
+            break
+        end
+    end
+    
+    for _, obj in pairs(ReplicatedStorage:GetDescendants()) do
+        if obj:IsA("RemoteFunction") then
+            remote_func = obj
+            break
+        end
+    end
+    
+    if remote_func then break end
+    task.wait(0.5)
+end
+
+if not remote_func then
+    remote_func = function() end
+end
+
+local function get_time_multiplier()
+    local hotbar = player_gui:FindFirstChild("ReactUniversalHotbar")
+    if hotbar then
+        hotbar = hotbar:FindFirstChild("Frame")
+        if hotbar then
+            local timescale = hotbar:FindFirstChild("timescale")
+            if timescale then
+                if timescale:FindFirstChild("Lock") then
+                    return 1
+                else
+                    return 0.5
+                end
+            end
+        end
+    end
+    return 1
+end
+
+local function start_auto_chain()
+    if auto_chain_running then return end
+    auto_chain_running = true
+
+    task.spawn(function()
+        local idx = 1
+
+        while _G.AutoChain do
+            local commander_towers = {}
+            
+            local towers_folder = Workspace:FindFirstChild("Towers")
+            if towers_folder then
+                for _, obj in pairs(towers_folder:GetDescendants()) do
+                    if obj:IsA("Folder") and obj.Name == "TowerReplicator" then
+                        local name = obj:GetAttribute("Name")
+                        local ownerId = obj:GetAttribute("OwnerId")
+                        local upgrade = obj:GetAttribute("Upgrade") or 0
+                        
+                        if name == "Commander" and ownerId == player.UserId and upgrade >= 2 then
+                            if obj.Parent then
+                                table.insert(commander_towers, obj.Parent)
+                            end
+                        end
+                    end
+                end
+            end
+
+            if #commander_towers >= 3 then
+                if idx > #commander_towers then 
+                    idx = 1 
+                end
+
+                local selected_tower = commander_towers[idx]
+                if selected_tower then
+                    pcall(function()
+                        if remote_func:IsA("RemoteFunction") then
+                            remote_func:InvokeServer("Troops", "Abilities", "Activate", {
+                                Troop = selected_tower, 
+                                Name = "Call Of Arms", 
+                                Data = {}
+                            })
+                        else
+                            remote_func("Troops", "Abilities", "Activate", {
+                                Troop = selected_tower, 
+                                Name = "Call Of Arms", 
+                                Data = {}
+                            })
+                        end
+                    end)
+                end
+
+                idx = idx + 1
+                
+                local multiplier = get_time_multiplier()
+                task.wait(11 * multiplier)
+            end
+
+            task.wait(1)
+        end
+
+        auto_chain_running = false
+    end)
+end
+
+local function start_auto_dj_booth()
+    if auto_dj_running then return end
+    auto_dj_running = true
+
+    task.spawn(function()
+        while _G.AutoDJ do
+            local DJ = nil
+            
+            local towers_folder = Workspace:FindFirstChild("Towers")
+            if towers_folder then
+                for _, obj in pairs(towers_folder:GetDescendants()) do
+                    if obj:IsA("Folder") and obj.Name == "TowerReplicator" then
+                        local name = obj:GetAttribute("Name")
+                        local ownerId = obj:GetAttribute("OwnerId")
+                        local upgrade = obj:GetAttribute("Upgrade") or 0
+                        
+                        if name == "DJ Booth" and ownerId == player.UserId and upgrade >= 3 then
+                            if obj.Parent then
+                                DJ = obj.Parent
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+
+            if DJ then
+                pcall(function()
+                    if remote_func:IsA("RemoteFunction") then
+                        remote_func:InvokeServer("Troops", "Abilities", "Activate", {
+                            Troop = DJ, 
+                            Name = "Drop The Beat", 
+                            Data = {}
+                        })
+                    else
+                        remote_func("Troops", "Abilities", "Activate", {
+                            Troop = DJ, 
+                            Name = "Drop The Beat", 
+                            Data = {}
+                        })
+                    end
+                end)
+
+                local multiplier = get_time_multiplier()
+                task.wait(28 * multiplier)
+            end
+
+            task.wait(1)
+        end
+
+        auto_dj_running = false
+    end)
+end
+
+task.wait(2)
+
+if _G.AutoChain then
+    start_auto_chain()
+end
+
+if _G.AutoDJ then
+    start_auto_dj_booth()
+end
+
+task.spawn(function()
+    local last_chain_state = _G.AutoChain
+    local last_dj_state = _G.AutoDJ
+    
+    while true do
+        if _G.AutoChain and not last_chain_state and not auto_chain_running then
+            start_auto_chain()
+        end
+        
+        if _G.AutoDJ and not last_dj_state and not auto_dj_running then
+            start_auto_dj_booth()
+        end
+        
+        last_chain_state = _G.AutoChain
+        last_dj_state = _G.AutoDJ
+        
+        task.wait(1)
+    end
+end)
