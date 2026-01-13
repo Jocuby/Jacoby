@@ -1,0 +1,150 @@
+-- Executor script: Hotbar + GUI + click-to-place troops
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local RemoteEvent = ReplicatedStorage:WaitForChild("RemoteEvent")
+local RemoteFunction = ReplicatedStorage:WaitForChild("RemoteFunction")
+local UIS = game:GetService("UserInputService")
+local camera = workspace.CurrentCamera
+
+-- Hotbar tracking
+local HotbarMapping = {}
+local waitingForAssignment = nil
+local waitingSlot = nil
+local lastHotbarSelected = nil
+local HOTBAR_SLOTS = 5
+
+-- GUI setup
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "HotbarStatusGUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 220, 0, 180)
+frame.Position = UDim2.new(1, -230, 0, 10)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.FillDirection = Enum.FillDirection.Vertical
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+uiListLayout.Padding = UDim.new(0, 5)
+uiListLayout.Parent = frame
+
+local slotLabels = {}
+for i = 1, HOTBAR_SLOTS do
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -10, 0, 25)
+    label.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.Font = Enum.Font.SourceSans
+    label.TextSize = 18
+    label.Text = string.format("Slot %d: [Unassigned]", i)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = frame
+    slotLabels[i] = label
+end
+
+local function updateGUI()
+    for i = 1, HOTBAR_SLOTS do
+        local tower = HotbarMapping[i] or "[Unassigned]"
+        slotLabels[i].Text = string.format("Slot %d: %s", i, tower)
+    end
+end
+
+-- Helper: get cursor X,Z in world
+local function getCursorXZ()
+    local mousePos = UIS:GetMouseLocation()
+    local ray = camera:ViewportPointToRay(mousePos.X, mousePos.Y)
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Blacklist
+    params.FilterDescendantsInstances = { camera }
+    local result = workspace:Raycast(ray.Origin, ray.Direction * 5000, params)
+    if result then
+        local p = result.Position
+        return p.X, p.Z
+    end
+    return nil, nil
+end
+
+-- Metatable hook
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local oldNamecall = mt.__namecall
+
+local allAssigned = false
+
+mt.__namecall = newcclosure(function(self, ...)
+    local method = getnamecallmethod()
+    local args = {...}
+
+    -- === Hotbar assignment tracking ===
+    if method == "FireServer" and self == RemoteEvent then
+        if args[1] == "Hotbar" and args[2] == "Click" then
+            local slot = args[3]
+            lastHotbarSelected = slot -- store which hotbar was clicked
+            if not HotbarMapping[slot] then
+                waitingForAssignment = true
+                waitingSlot = slot
+                print("[Hotbar Click Detected] Waiting for tower assignment. Slot:", slot)
+            end
+        end
+
+        if args[1] == "Streaming" and args[2] == "SelectTower" then
+            if waitingForAssignment and waitingSlot then
+                local towerName = args[3]
+                HotbarMapping[waitingSlot] = towerName
+                print(string.format("[Mapping Assigned] Hotbar %d -> Tower %s", waitingSlot, towerName))
+                waitingForAssignment = nil
+                waitingSlot = nil
+                updateGUI()
+
+                -- Check if all hotbars are assigned
+                allAssigned = true
+                for i = 1, HOTBAR_SLOTS do
+                    if not HotbarMapping[i] then
+                        allAssigned = false
+                        break
+                    end
+                end
+                if allAssigned then
+                    print("[All Hotbars Assigned] Click-to-place troop active")
+                end
+            end
+        end
+    end
+
+    return oldNamecall(self, ...)
+end)
+
+setreadonly(mt, true)
+
+-- === Click-to-place troop ===
+UIS.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        if lastHotbarSelected and HotbarMapping[lastHotbarSelected] then
+            local x, z = getCursorXZ()
+            if x and z then
+                local args = {
+                    "Troops",
+                    "Pl\208\176ce",
+                    {
+                        Rotation = CFrame.new(0,0,0,1,0,0,0,1,0,0,0,1),
+                        Position = Vector3.new(x, 80, z)
+                    },
+                    HotbarMapping[lastHotbarSelected]
+                }
+                RemoteFunction:InvokeServer(unpack(args))
+                print(string.format("[Troop Fired] Hotbar %d -> Tower %s at X:%.1f Z:%.1f", 
+                    lastHotbarSelected, HotbarMapping[lastHotbarSelected], x, z))
+
+                -- Reset selection so player must click hotbar again
+                lastHotbarSelected = nil
+            end
+        end
+    end
+end)
+
