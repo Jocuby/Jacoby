@@ -1,6 +1,5 @@
-- [[ INITIALIZE LIBRARY ]]
 local TDS =
-loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%%22))()
 
 TDS:Loadout("War Machine", "Mecha Base", "", "", "Commando")
 
