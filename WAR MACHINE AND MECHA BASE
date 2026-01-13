@@ -1,13 +1,5 @@
-- [[ INITIALIZE LIBRARY ]]
-local TDS =
-loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%"))()
-
-TDS:Loadout("War Machine", "Mecha Base", "", "", "Commando")
+--- Load the TDS library
+local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/test/refs/heads/main/library%20new/new%20ui%20test%20test.lua"))()
 
 
-TDS:Place("Mecha Base", -4, 60, -2, "stack")
-TDS:Place("Mecha Base", -1, 60, -2, "stack")
-TDS:Place("Mecha Base", -2, 60, -2, "stack")
-TDS:Place("Mecha Base", -3, 60, -2, "stack")
-
-TDS:Place("Mecha Base", -7, 60, -2, "stack")
+TDS:Place("War Machine", -0.51527023, 60, -0.76658535, "stack")
