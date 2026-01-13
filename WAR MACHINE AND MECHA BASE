@@ -3,17 +3,5 @@ local TDS = loadstring(game:HttpGet("https://raw.githubusercontent.com/raxs0420/
 
 
 TDS:Place("War Machine", -1.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -2.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -3.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -4.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -5.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -6.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -7.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -8.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -9.51527023, 60, -0.76658535, "stack")
-TDS:Place("War Machine", -10.51527023, 60, -0.76658535, "stack")
-TDS:Place("Mecha Base", -11.51527023, 60, -0.76658535, "stack")
-TDS:Place("Mecha Base", -12.51527023, 60, -0.76658535, "stack")
-TDS:Place("Mecha Base", -13.51527023, 60, -0.76658535, "stack")
-TDS:Place("Mecha Base", -14.51527023, 60, -0.76658535, "stack")
+
 
